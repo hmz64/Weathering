@@ -1,0 +1,5 @@
+{
+  "name": "Lumina Weather",
+  "description": "A liquid glassmorphism weather app powered by Open-Meteo, featuring real-time forecasts and elegant dark aesthetics.",
+  "requestFramePermissions": ["geolocation"]
+}

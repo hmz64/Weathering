@@ -1,0 +1,16 @@
+{
+  "name": "Lumina Weather",
+  "short_name": "Lumina",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050508",
+  "theme_color": "#050508",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
