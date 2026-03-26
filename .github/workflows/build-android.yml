@@ -14,39 +14,49 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 1. Update ke Node 20 sesuai permintaan dependencies
       - name: Setup Node.js 20
         uses: actions/setup-node@v4
         with:
           node-version: '20' 
           cache: 'npm'
 
-      # 2. Install semua dependencies proyek web kamu
       - name: Install Dependencies
         run: npm install
 
-      # 3. Build proyek Vite (menghasilkan folder dist/)
       - name: Build Web App (Vite)
         run: npm run build
 
-      # 4. Install dan Setup Capacitor untuk mengubah Web jadi Android
       - name: Setup Capacitor & Android Platform
         run: |
           npm install @capacitor/core
           npm install -D @capacitor/cli @capacitor/android
-          # Menginisialisasi Capacitor, arahkan ke folder hasil build Vite (dist)
           npx cap init "Weathering" "com.hmz64.weathering" --web-dir dist
           npx cap add android
           npx cap sync android
 
-      # 5. Siapkan environment Java
+      # --- SCRIPT INJEKSI UNTUK FIX ERROR KOTLIN ---
+      - name: Fix Kotlin Duplicate Class Conflict
+        run: |
+          cat <<EOF >> android/build.gradle
+
+          // Script tambahan untuk memaksa resolusi versi Kotlin
+          allprojects {
+              configurations.all {
+                  resolutionStrategy {
+                      force 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22'
+                      force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22'
+                      force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22'
+                  }
+              }
+          }
+          EOF
+
       - name: Setup Java JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '21'
 
-      # 6. Build APK Android
       - name: Make gradlew executable
         run: chmod +x android/gradlew
 
@@ -55,7 +65,6 @@ jobs:
           cd android
           ./gradlew assembleDebug
 
-      # 7. Upload hasil APK
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
